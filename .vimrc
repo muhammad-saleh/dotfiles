@@ -52,6 +52,7 @@ Plugin 'majutsushi/tagbar'
 Plugin 'othree/yajs.vim'
 Plugin 'othree/es.next.syntax.vim'
 Plugin 'HerringtonDarkholme/yats.vim'
+Plugin 'easymotion/vim-easymotion'
 
 " All of your Plugins must be added before the following line
 call vundle#end()
@@ -117,18 +118,6 @@ set cursorline
 set cursorcolumn
 set noerrorbells
 
-" Multipurpose Tab Key
-function! InsertTabWrapper()
-  let col = col('.') - 1
-  if !col || getline('.')[col - 1] !~ '\k'
-    return "\<tab>"
-  else
-    return "\<c-p>"
-  endif
-endfunction
-inoremap <tab> <c-r>=InsertTabWrapper()<cr>
-inoremap <s-tab> <c-n>
-
 " Searching
 set incsearch
 set hlsearch
@@ -156,8 +145,6 @@ noremap <silent> <Left> <c-w>h
 noremap <silent> <Up> <c-w>k
 noremap <silent> <Down> <c-w>j
 
-" Command
-map <leader><leader> :
 " Config
 map <leader>c :e ~/.vimrc<CR>
 " Reload Config
@@ -192,4 +179,7 @@ filetype plugin on
 "
 set conceallevel=0
 let g:indentLine_setConceal = 0
+let g:ycm_key_list_select_completion = ['<Down>']
+let g:user_emmet_expandabbr_key='<Tab>'
+imap <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
 autocmd BufWritePost $MYVIMRC source $MYVIMRC

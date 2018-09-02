@@ -7,52 +7,43 @@ filetype off
 set ruler
 set rtp+=~/.vim/bundle/Vundle.vim
 set rtp+=/usr/local/opt/fzf
+" set rtp+=/usr/local/bin/fzf
+source ~/.fzf/plugin/fzf.vim
 call vundle#begin()
 
 " Github Bundles
-Plugin 'danro/rename.vim'
-Plugin 'docunext/closetag.vim'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'gmarik/Vundle.vim'
 Plugin 'junegunn/fzf'
-Plugin 'kana/vim-fakeclip'
-Plugin 'kchmck/vim-coffee-script'
-Plugin 'kien/ctrlp.vim'
-Plugin 'nathanaelkane/vim-indent-guides'
+Plugin 'junegunn/fzf.vim'
 Plugin 'raimondi/delimitMate'
-Plugin 'rking/ag.vim'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'scrooloose/nerdtree'
-Plugin 'shougo/neocomplete.vim'
-Plugin 'tpope/vim-endwise'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-markdown'
-Plugin 'tpope/vim-rails.git'
-Plugin 'tpope/vim-rbenv'
+"Plugin 'tpope/vim-fugitive'
+"Plugin 'tpope/vim-markdown'
 Plugin 'tpope/vim-surround'
-Plugin 'vim-ruby/vim-ruby'
-Plugin 'vim-scripts/DeleteTrailingWhitespace'
-Plugin 'vim-scripts/ShowTrailingWhitespace'
-Plugin 'leafgarland/typescript-vim'
-Plugin 'Xuyuanp/nerdtree-git-plugin'
+"Plugin 'vim-scripts/ShowTrailingWhitespace'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'mattn/emmet-vim'
-Plugin 'christoomey/vim-tmux-navigator'
-Plugin 'pangloss/vim-javascript'
 Plugin 'Valloric/YouCompleteMe'
-Plugin 'xolox/vim-misc'
-Plugin 'xolox/vim-colorscheme-switcher'
-Plugin 'othree/javascript-libraries-syntax.vim'
-Plugin 'ap/vim-css-color'
 Plugin 'RRethy/vim-illuminate'
 Plugin 'tpope/vim-unimpaired'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'majutsushi/tagbar'
-Plugin 'othree/yajs.vim'
-Plugin 'othree/es.next.syntax.vim'
-Plugin 'HerringtonDarkholme/yats.vim'
-Plugin 'easymotion/vim-easymotion'
+"Plugin 'airblade/vim-gitgutter'
+"Plugin 'trevordmiller/nova-vim'
+"Plugin 'Khaledgarbaya/night-owl-vim-theme'
+Plugin 'pangloss/vim-javascript'
+Plugin 'mxw/vim-jsx'
+Plugin 'leafgarland/typescript-vim'
+"Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'jremmen/vim-ripgrep'
+Plugin 'honza/vim-snippets'
+Plugin 'epilande/vim-react-snippets'
+Plugin 'SirVer/ultisnips'
+Plugin 'ayu-theme/ayu-vim'
+Plugin 'drewtempelmeyer/palenight.vim'
+Plugin 'mhartington/oceanic-next'
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()
@@ -61,21 +52,9 @@ filetype plugin on
 set conceallevel=0
 let g:deoplete#enable_at_startup = 1
 
-" Indent Guides configuration
-let g:indentguides_spacechar = '┆'
-
-" Trailing Whitespace configuration
-let g:DeleteTrailingWhitespace = 1
-let g:DeleteTrailingWhitespace_Action = 'delete'
-
-" CtrlP configuration
-set runtimepath^=~/.vim/bundle/ctrlp.vim
-let g:ctrlp_working_path_mode = 'ra'
-let g:ctrlp_show_hidden = 1
-
 " Nerdtree configuration
 let NERDTreeShowHidden=1
-let g:NERDTreeWinSize = 50
+let g:NERDTreeWinSize=30
 
 let g:airline#extensions#tabline#enabled = 1
 
@@ -90,9 +69,9 @@ let g:syntastic_javascript_eslint_exe = '$(npm bin)/eslint'
 set t_Co=256
 syntax enable
 set background=dark
-colorscheme lucario
+colorscheme palenight
 filetype plugin indent on
-let g:syntastic_ruby_exec = '~/.rbenv/shims/ruby'
+
 
 " set colorcolumn=80
 
@@ -102,6 +81,7 @@ set softtabstop=2
 set shiftwidth=2
 set tabstop=2
 set smarttab
+set mouse=a
 
 " Interface
 set showcmd
@@ -109,14 +89,12 @@ set showcmd
 " Editing
 set smartindent
 set showmode
-set showmatch
 set list listchars=tab:>>,eol:¬,trail:·
 set rnu
 set number
 set backspace=indent,eol,start
-set cursorline
-set cursorcolumn
 set noerrorbells
+ set cursorline
 
 " Searching
 set incsearch
@@ -165,8 +143,11 @@ map <leader>f :FZF<CR>
 hi StatusLine ctermbg=green ctermfg=black
 set statusline=[%n]\ %<%.99f\ %h%w%m%r%{exists('*CapsLockStatusline')?CapsLockStatusline():''}%y%=%-16(\ %l,%c-%v\ %)%P
 
-filetype plugin on
+hi clear VertSplit
+hi VertSplit ctermbg=none ctermfg=black
+set fillchars+=vert:\│
 
+"filetype plugin on
 " NERDTree Integration
 " autocmd vimenter * NERDTree
 " autocmd StdinReadPre * let s:std_in=1
@@ -183,3 +164,28 @@ let g:ycm_key_list_select_completion = ['<Down>']
 let g:user_emmet_expandabbr_key='<Tab>'
 imap <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
 autocmd BufWritePost $MYVIMRC source $MYVIMRC
+
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+
+
+function! FZFRg(...)
+    return 'rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.a:1.' -g *.{'.get(a:, 2, "*").'}'
+endfunction
+
+command! -bang -nargs=* Find call fzf#vim#grep(FZFRg(<f-args>), 1, <bang>0)
+
+
+" YouCompleteMe and UltiSnips compatibility. pre-req in autoload: (https://github.com/wincent/wincent/blob/9b938b4d879a2/roles/dotfiles/files/.vim/plugin/autocomplete.vim)
+let g:UltiSnipsExpandTrigger = '<C-l>'
+let g:UltiSnipsJumpForwardTrigger = '<c-l>'
+let g:UltiSnipsJumpBackwardTrigger = '<c-z>'
+let g:UltiSnipsSnippetsDir = '/Users/saleh/Library/Mobile Documents/com~apple~CloudDocs/VimUltisnips'
+let g:UltiSnipsSnippetDirectories = ['~/.vim/UltiSnips','/Users/saleh/Library/Mobile Documents/com~apple~CloudDocs/VimUltisnips']
+
+
+
+
+

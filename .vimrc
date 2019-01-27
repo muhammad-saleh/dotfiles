@@ -66,6 +66,8 @@ Plugin 'prabirshrestha/asyncomplete.vim'
 Plugin 'prabirshrestha/asyncomplete-lsp.vim'
 Plugin 'simeji/winresizer'
 Plugin 'prettier/vim-prettier'
+Plugin 'junegunn/seoul256.vim'
+Plugin 'sheerun/vim-polyglot'
 " LSP Config
 "Plugin 'prabirshrestha/async.vim'
 "Plugin 'prabirshrestha/vim-lsp'

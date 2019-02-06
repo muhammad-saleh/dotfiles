@@ -161,9 +161,11 @@ let g:syntastic_javascript_eslint_exe = '$(npm bin)/eslint'
 " Syntax Highlighting
 set t_Co=256
 syntax enable
+let g:seoul256_background = 236
+colo seoul256
 set background=dark
 "colorscheme palenight
-colorscheme gruvbox
+"colorscheme gruvbox
 filetype plugin indent on
 
 

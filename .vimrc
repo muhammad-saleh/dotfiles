@@ -2,6 +2,7 @@
 set shell=/bin/bash
 set clipboard=unnamed
 set nocompatible
+set encoding=utf-8
 filetype off
 
 set ruler
@@ -13,11 +14,10 @@ call vundle#begin()
 " Github Bundles
 Plugin 'flazz/vim-colorschemes'
 Plugin 'gmarik/Vundle.vim'
-Plugin 'junegunn/fzf'
-Plugin 'junegunn/fzf.vim'
 Plugin 'raimondi/delimitMate'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'scrooloose/nerdtree'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'tpope/vim-fugitive'
 Plugin 'arcticicestudio/nord-vim'
 Plugin 'chriskempson/base16-vim'
@@ -36,7 +36,6 @@ Plugin 'Khaledgarbaya/night-owl-vim-theme'
 Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
 Plugin 'leafgarland/typescript-vim'
-"Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'jremmen/vim-ripgrep'
 Plugin 'honza/vim-snippets'
 Plugin 'epilande/vim-react-snippets'
@@ -74,6 +73,10 @@ Plugin 'sheerun/vim-polyglot'
 "Plugin 'ryanolsonx/vim-lsp-typescript'
 "Plugin 'prabirshrestha/asyncomplete.vim'
 Plugin 'junegunn/vim-peekaboo'
+Plugin 'tmhedberg/matchit'
+Plugin 'junegunn/fzf'
+Plugin 'junegunn/fzf.vim'
+Plugin 'andymass/vim-matchup'
 
 if executable('rls')
     au User lsp_setup call lsp#register_server({
@@ -103,7 +106,7 @@ let g:LanguageClient_serverCommands = {
     \ 'python': ['/usr/local/bin/pyls'],
     \ }
 
-nnoremap <F5> :call LanguageClient_contextMenu()<CR>
+nnoremap <F6> :call LanguageClient_contextMenu()<CR>
 " Or map each action separately
 nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
@@ -161,9 +164,9 @@ let g:syntastic_javascript_eslint_exe = '$(npm bin)/eslint'
 " Syntax Highlighting
 set t_Co=256
 syntax enable
+set background=dark
 let g:seoul256_background = 236
 colo seoul256
-set background=dark
 "colorscheme palenight
 "colorscheme gruvbox
 filetype plugin indent on
@@ -218,6 +221,7 @@ let mapleader = ','
 map <leader>n :NERDTreeToggle<CR>
 map <leader>b :Buffers<CR>
 map <leader><leader>f :Buffers<CR>
+map <leader>l :Lines<CR>
 
 " move around with the arrow keys
 noremap <silent> <Right> <c-w>l
@@ -243,7 +247,7 @@ map <leader>rbi :!bundle<CR>
 " VIM Bundle
 map <leader>B :BundleInstall<CR>q
 
-map <leader>f :FZF<CR>
+map <leader>f :Files<CR>
 map <leader>F :Buffers<CR>
 
 hi StatusLine ctermbg=green ctermfg=black
@@ -269,24 +273,24 @@ let delimitMate_expand_cr=1
 set conceallevel=0
 let g:indentLine_setConceal = 0
 let g:ycm_key_list_select_completion = ['<Down>']
+let g:ycm_autoclose_preview_window_after_completion = 1
 let g:user_emmet_expandabbr_key='<Tab>'
 imap <expr> <tab> emmet#expandAbbrIntelligent("\<tab>")
 autocmd BufWritePost $MYVIMRC source $MYVIMRC
+let g:matchup_matchparen_deferred = 1
+let g:matchup_matchparen_hi_surround_always = 1
 
 nnoremap <c-j> <c-w>j
 nnoremap <c-k> <c-w>k
 nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 
+" ZOOM
+nnoremap <leader>z :!tmux resize-pane -Z<CR><Esc>
 
-function! FZFRg(...)
-    return 'rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.a:1.' -g *.{'.get(a:, 2, "*").'}'
-endfunction
+let $BAT_THEME = 'TwoDark'
+let g:fzf_files_options = "--preview 'bat --color \"always\" {}'"
 
-command! -bang -nargs=* Find call fzf#vim#grep(FZFRg(<f-args>), 1, <bang>0)
-
-let g:fzf_files_options =
-      \ '--preview "(bat {}) 2> /dev/null | head -'.&lines.'"'
 
 
 " YouCompleteMe and UltiSnips compatibility. pre-req in autoload: (https://github.com/wincent/wincent/blob/9b938b4d879a2/roles/dotfiles/files/.vim/plugin/autocomplete.vim)
@@ -296,7 +300,15 @@ let g:UltiSnipsJumpBackwardTrigger = '<c-z>'
 let g:UltiSnipsSnippetsDir = '/Users/saleh/Library/Mobile Documents/com~apple~CloudDocs/VimUltisnips'
 let g:UltiSnipsSnippetDirectories = ['~/.vim/UltiSnips','/Users/saleh/Library/Mobile Documents/com~apple~CloudDocs/VimUltisnips']
 
+command! -bang -nargs=* Find
+      \ call fzf#vim#grep(
+      \   'rg --column --line-number --no-heading --color=always ' . <q-args>, 1,
+      \   <bang>0 ? fzf#vim#with_preview('up:60%') : fzf#vim#with_preview('right:50%:hidden', '?'),
+      \   <bang>0)
 
-
-
-
+command! -bang -nargs=* Rg2
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case .<q-args>.', 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%', '?'),
+  \   <bang>0)
